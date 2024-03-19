@@ -15,6 +15,7 @@ public class SwaggerConfiguration {
     @Value("${server.port}")
     private String port;
 
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
