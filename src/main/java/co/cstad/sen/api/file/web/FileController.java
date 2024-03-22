@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -34,8 +34,8 @@ public class FileController {
     private final FileService fileService;
     @PostMapping(value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 
-    public BaseApi<?> uploadSingleFile(@RequestPart("file") MultipartFile file) {
-        FileDto fileDto = fileService.uploadSingle(file);
+    public BaseApi<?> uploadSingleFile(@RequestPart("file") MultipartFile file,HttpServletRequest request) {
+        FileDto fileDto = fileService.uploadSingle(file,request);
 
         return BaseApi.builder()
                 .status(true)
@@ -47,10 +47,10 @@ public class FileController {
     }
 
     @PostMapping(value = "/uploads",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public BaseApi<?> uploadMultiple(@RequestPart("files") List<MultipartFile> files) {
+    public BaseApi<?> uploadMultiple(@RequestPart("files") List<MultipartFile> files,HttpServletRequest request) {
         log.info("Request file upload = {}", files);
 
-        List<FileDto> filesDto = fileService.uploadMultiple(files);
+        List<FileDto> filesDto = fileService.uploadMultiple(files,request);
 
         return BaseApi.builder()
                 .status(true)
@@ -61,9 +61,9 @@ public class FileController {
                 .build();
     }
     @GetMapping("/{name}")
-    public BaseApi<?> findByName(@PathVariable String name) throws IOException {
+    public BaseApi<?> findByName(@PathVariable String name, HttpServletRequest request) throws IOException {
 
-        FileDto fileDto = fileService.findByName(name);
+        FileDto fileDto = fileService.findByName(name,request);
 
         return BaseApi.builder()
                 .status(true)
@@ -75,8 +75,8 @@ public class FileController {
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{name}")
-    public void delete(@PathVariable String name) {
-        fileService.delete(name);
+    public void delete(@PathVariable String name,HttpServletRequest request) {
+        fileService.delete(name,request);
     }
 
     @GetMapping("/download/{name}")
