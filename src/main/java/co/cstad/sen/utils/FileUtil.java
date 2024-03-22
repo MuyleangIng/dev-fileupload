@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,6 +119,7 @@ public class FileUtil {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
         return baseUrl + "/api/v1/files/download/" + fileName;
     }
+
 
     public boolean isExtensionAllowed(String extension) {
         return ALLOWED_EXTENSIONS.contains(extension.toLowerCase());

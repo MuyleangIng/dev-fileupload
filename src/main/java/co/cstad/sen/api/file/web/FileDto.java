@@ -12,5 +12,6 @@ public class FileDto {
     private final Long size;
     private final String downloadUrl;
     private final String additionalInfo;
+    private String viewUrl;
 
 }

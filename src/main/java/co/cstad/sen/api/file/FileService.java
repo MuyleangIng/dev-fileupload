@@ -14,4 +14,8 @@ public interface FileService {
     FileDto findByName(String name, HttpServletRequest request) throws IOException;
     void delete(String name, HttpServletRequest request);
     Resource download(String name) throws IOException;
+    Resource loadAsResource(String filename, HttpServletRequest request) throws IOException; // New method
+    String getViewUrl(String fileName, HttpServletRequest request);
+
+
 }

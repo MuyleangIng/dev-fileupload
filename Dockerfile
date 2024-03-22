@@ -9,7 +9,7 @@ RUN gradle build --no-daemon
 FROM openjdk:17-alpine
 WORKDIR /app
 # Copy the built JAR from the builder stage
-COPY --from=builder /app/build/libs/automatex-api-1.0.0-SNAPSHOT.jar /app/
+COPY --from=builder /app/build/libs/devops-1.0.0-SNAPSHOT.jar /app/
 EXPOSE 8080
 VOLUME /images
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app/automatex-api-1.0.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "/app/devops-1.0.0-SNAPSHOT.jar"]

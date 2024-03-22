@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,17 +33,26 @@ import java.util.List;
 @Tag(name = "Files")
 public class FileController {
     private final FileService fileService;
+
     @PostMapping(value = "/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 
     public BaseApi<?> uploadSingleFile(@RequestPart("file") MultipartFile file,HttpServletRequest request) {
         FileDto fileDto = fileService.uploadSingle(file,request);
-
+        String viewUrl = fileService.getViewUrl(fileDto.getName(), request);
+        FileDto responseDto = FileDto.builder()
+                .name(fileDto.getName())
+                .extension(fileDto.getExtension())
+                .size(fileDto.getSize())
+                .downloadUrl(fileDto.getDownloadUrl())
+                .additionalInfo(fileDto.getAdditionalInfo())
+                .viewUrl(viewUrl) // Assuming you added this field to FileDto
+                .build();
         return BaseApi.builder()
                 .status(true)
                 .code(HttpStatus.OK.value())
                 .message("File has been uploaded")
                 .timeStamp(LocalDateTime.now())
-                .data(fileDto)
+                .data(responseDto)
                 .build();
     }
 
@@ -62,15 +72,23 @@ public class FileController {
     }
     @GetMapping("/{name}")
     public BaseApi<?> findByName(@PathVariable String name, HttpServletRequest request) throws IOException {
-
         FileDto fileDto = fileService.findByName(name,request);
-
+        String viewUrl = fileService.getViewUrl(fileDto.getName(), request);
+        FileDto responseDto = FileDto.builder()
+                .name(fileDto.getName())
+                .extension(fileDto.getExtension())
+                .size(fileDto.getSize())
+                .downloadUrl(fileDto.getDownloadUrl())
+                .additionalInfo(fileDto.getAdditionalInfo())
+                .viewUrl(viewUrl) // Assuming you added this field to FileDto
+                .build();
         return BaseApi.builder()
                 .status(true)
                 .code(HttpStatus.OK.value())
                 .message("File has been found")
                 .timeStamp(LocalDateTime.now())
-                .data(fileDto)
+                .data(responseDto)
+
                 .build();
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -88,5 +106,14 @@ public class FileController {
                 .header("Content-Disposition",
                         "attachment; filename=" + resource.getFilename())
                 .body(resource);
+    }
+    @GetMapping("/view/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> viewFile(@PathVariable String filename, HttpServletRequest request) throws IOException {
+        Resource file = fileService.loadAsResource(filename,request);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(request.getServletContext().getMimeType(file.getFile().getAbsolutePath())))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
+                .body(file);
     }
 }

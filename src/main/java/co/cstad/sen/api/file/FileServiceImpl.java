@@ -43,7 +43,6 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-
     private FileDto handleZipUpload(MultipartFile file, HttpServletRequest request) {
         FileDto zipFileDto = fileUtil.upload(file, request);
         List<FileDto> extractedFiles = fileUtil.extractZip(file.getOriginalFilename(), "extractedFolder", request);
@@ -58,7 +57,6 @@ public class FileServiceImpl implements FileService {
                         .collect(Collectors.joining(", ")))
                 .build();
     }
-
 
     private FileDto handleRegularFileUpload(MultipartFile file, HttpServletRequest request) {
         return fileUtil.upload(file,request);
@@ -123,5 +121,15 @@ public class FileServiceImpl implements FileService {
     @Override
     public Resource download(String name) throws IOException {
         return fileUtil.load(name);
+    }
+    @Override
+    public Resource loadAsResource(String filename, HttpServletRequest request) throws IOException {
+        return fileUtil.load(filename);
+    }
+
+    @Override
+    public String getViewUrl(String fileName, HttpServletRequest request) {
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+        return baseUrl + "/api/v1/files/view/" + fileName;
     }
 }
