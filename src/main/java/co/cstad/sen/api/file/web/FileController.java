@@ -38,38 +38,37 @@ public class FileController {
 
     public BaseApi<?> uploadSingleFile(@RequestPart("file") MultipartFile file,HttpServletRequest request) {
         FileDto fileDto = fileService.uploadSingle(file,request);
-        String viewUrl = fileService.getViewUrl(fileDto.getName(), request);
-        return null;
-        // FileDto responseDto = FileDto.builder()
-        //         .name(fileDto.getName())
-        //         .extension(fileDto.getExtension())
-        //         .size(fileDto.getSize())
-        //         .downloadUrl(fileDto.getDownloadUrl())
-        //         .additionalInfo(fileDto.getAdditionalInfo())
-        //         .viewUrl(viewUrl) // Assuming you added this field to FileDto
-        //         .build();
-        // return BaseApi.builder()
-        //         .status(true)
-        //         .code(HttpStatus.OK.value())
-        //         .message("File has been uploaded")
-        //         .timeStamp(LocalDateTime.now())
-        //         .data(responseDto)
-        //         .build();
+        String viewUrl = fileService.getViewUrl(fileDto.getName(), null);
+        FileDto responseDto = FileDto.builder()
+                .name(fileDto.getName())
+                .extension(fileDto.getExtension())
+                .size(fileDto.getSize())
+                .downloadUrl(fileDto.getDownloadUrl())
+                .additionalInfo(fileDto.getAdditionalInfo())
+                .viewUrl(viewUrl) // Assuming you added this field to FileDto
+                .build();
+        return BaseApi.builder()
+                .status(true)
+                .code(HttpStatus.OK.value())
+                .message("File has been uploaded")
+                .timeStamp(LocalDateTime.now())
+                .data(responseDto)
+                .build();
     }
 
     @PostMapping(value = "/uploads",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseApi<?> uploadMultiple(@RequestPart("files") List<MultipartFile> files,HttpServletRequest request) {
         log.info("Request file upload = {}", files);
 
-        List<FileDto> filesDto = fileService.uploadMultiple(null);
-        return null;
-        // return BaseApi.builder()
-        //         .status(true)
-        //         .code(HttpStatus.OK.value())
-        //         .message("Files have been uploaded")
-        //         .timeStamp(LocalDateTime.now())
-        //         .data(filesDto)
-        //         .build();
+        List<FileDto> filesDto = fileService.uploadMultiple(null,null);
+
+        return BaseApi.builder()
+                .status(true)
+                .code(HttpStatus.OK.value())
+                .message("Files have been uploaded")
+                .timeStamp(LocalDateTime.now())
+                .data(filesDto)
+                .build();
     }
     @GetMapping("/{name}")
     public BaseApi<?> findByName(@PathVariable String name, HttpServletRequest request) throws IOException {
