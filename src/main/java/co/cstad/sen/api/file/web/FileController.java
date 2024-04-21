@@ -38,7 +38,7 @@ public class FileController {
 
     public BaseApi<?> uploadSingleFile(@RequestPart("file") MultipartFile file,HttpServletRequest request) {
         FileDto fileDto = fileService.uploadSingle(file,request);
-        String viewUrl = fileService.getViewUrl(fileDto.getName(), null);
+        String viewUrl = fileService.getViewUrl(fileDto.getName(),request);
         FileDto responseDto = FileDto.builder()
                 .name(fileDto.getName())
                 .extension(fileDto.getExtension())
